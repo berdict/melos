@@ -55,7 +55,8 @@ function Economy.speedMultiplier(speed: number): number
 	return 1 + speed * Config.Speed.LifeBonusPerSpeed
 end
 
-function Economy.tapValue(stoneLevel: number, fishCount: number, speed: number): number
+-- 한 걸음당 생명력 (걷기가 곧 클릭이다)
+function Economy.stepValue(stoneLevel: number, fishCount: number, speed: number): number
 	return stoneLevel
 		* doublings(stoneLevel, Config.Stone.DoubleEvery)
 		* 2 ^ fishCount

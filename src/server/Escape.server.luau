@@ -1,5 +1,5 @@
 --!strict
--- Keyboard Escape식 시스템: 구역 안에서 달리면 걸음마다 +1 Speed.
+-- Keyboard Escape식 시스템: 구역 안에서 걸으면 걸음마다 +1 Speed와 생명력을 얻는다 (걷기가 곧 클릭).
 -- 맵 파트는 CollectionService 태그로 지정한다:
 --   EscapeZone  : 걸음이 집계되는 영역 (투명 파트로 키보드 코스 전체를 덮는다)
 --   KillBrick   : 닿으면 시작점으로 복귀 (Speed는 유지)
@@ -11,6 +11,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config") :: ModuleScript)
+local Economy = require(Shared:WaitForChild("Economy") :: ModuleScript)
 local PlayerData = require(script.Parent:WaitForChild("PlayerData") :: ModuleScript)
 
 local ZONE_TAG = "EscapeZone"
@@ -158,6 +159,8 @@ while true do
 				local steps = math.floor(tracker.carry / Config.Speed.StudsPerStep)
 				if steps > 0 then
 					tracker.carry -= steps * Config.Speed.StudsPerStep
+					-- 걸음당 생명력은 지금 Speed 기준으로 계산하고, 그 뒤에 Speed를 올린다
+					data.life += steps * Economy.stepValue(data.stoneLevel, data.fishCount, data.speed)
 					data.speed += steps * Config.Speed.SpeedPerStep
 					PlayerData.markDirty(player)
 				end

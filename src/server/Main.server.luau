@@ -1,5 +1,6 @@
 --!strict
--- 어비스리움식 탭 성장 루프. 모든 수치 검증은 서버에서 한다.
+-- 어비스리움식 성장(업그레이드/물고기/산호) 처리. 생명력 획득은 걸음마다 Escape.server.luau가 한다.
+-- 모든 수치 검증은 서버에서 한다.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -43,7 +44,7 @@ local function snapshot(data: PlayerData.Data)
 		fishCount = data.fishCount,
 		speed = data.speed,
 		clears = data.clears,
-		tapValue = Economy.tapValue(data.stoneLevel, data.fishCount, data.speed),
+		stepValue = Economy.stepValue(data.stoneLevel, data.fishCount, data.speed),
 		passive = Economy.passivePerSecond(data.corals, data.fishCount, data.speed),
 		stoneCost1 = Economy.stoneCostMany(data.stoneLevel, 1),
 		stoneCost25 = Economy.stoneCostMany(data.stoneLevel, 25),
@@ -67,34 +68,13 @@ local function pushState(player: Player)
 	end
 end
 
--- 초당 탭 횟수 제한 (매크로/리모트 스팸 방지)
-local tapWindows: { [Player]: { start: number, count: number } } = {}
-
-local function allowTap(player: Player): boolean
-	local now = os.clock()
-	local window = tapWindows[player]
-	if not window or now - window.start >= 1 then
-		tapWindows[player] = { start = now, count = 1 }
-		return true
-	end
-	if window.count >= Config.MaxTapsPerSecond then
-		return false
-	end
-	window.count += 1
-	return true
-end
-
 actionEvent.OnServerEvent:Connect(function(player: Player, action: unknown, arg: unknown)
 	local data = PlayerData.get(player)
 	if not data or type(action) ~= "string" then
 		return
 	end
 
-	if action == "Tap" then
-		if allowTap(player) then
-			data.life += Economy.tapValue(data.stoneLevel, data.fishCount, data.speed)
-		end
-	elseif action == "UpgradeStone" then
+	if action == "UpgradeStone" then
 		if type(arg) ~= "number" or not ALLOWED_STONE_STEPS[arg] then
 			return
 		end
@@ -161,7 +141,6 @@ end
 Players.PlayerRemoving:Connect(function(player)
 	PlayerData.save(player)
 	PlayerData.release(player)
-	tapWindows[player] = nil
 end)
 
 game:BindToClose(function()

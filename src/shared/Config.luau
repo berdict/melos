@@ -10,13 +10,12 @@ export type CoralDef = {
 local Config = {
 	AutosaveInterval = 60,
 	OfflineCapSeconds = 3 * 60 * 60, -- 방치 수익 상한 3시간
-	MaxTapsPerSecond = 20,
 	MaxFish = 150,
 
 	Stone = {
 		BaseCost = 10,
 		CostGrowth = 1.07, -- 레벨당 비용 +7%
-		DoubleEvery = 25, -- 25레벨마다 탭 생산량 2배
+		DoubleEvery = 25, -- 25레벨마다 걸음당 생명력 2배
 	},
 
 	Coral = {
@@ -29,7 +28,7 @@ local Config = {
 	Speed = {
 		StudsPerStep = 3, -- 이 거리를 달리면 1걸음
 		SpeedPerStep = 1, -- 걸음당 +1 Speed
-		LifeBonusPerSpeed = 0.01, -- Speed 1당 생명력 +1%
+		LifeBonusPerSpeed = 0.001, -- Speed 1당 생명력 +0.1% (빨라지면 걸음 수도 늘어나므로 작게)
 		WalkSpeedBase = 16,
 		WalkSpeedPerSpeed = 0.02,
 		WalkSpeedMax = 80,

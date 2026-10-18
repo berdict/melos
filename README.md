@@ -1,6 +1,6 @@
 # AquaEscape
 
-탭으로 키우는 수족관 + 걸음마다 Speed가 오르는 키보드 탈출 코스를 합친 Roblox 게임. 설계는 [docs/DESIGN.md](docs/DESIGN.md) 참고.
+걸음마다 Speed가 오르는 걷기 클리커(키보드 탈출 코스)에 어비스리움식 성장 시스템을 얹은 Roblox 게임. 설계는 [docs/DESIGN.md](docs/DESIGN.md) 참고.
 
 ## 실행
 

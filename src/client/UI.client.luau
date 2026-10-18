@@ -43,20 +43,6 @@ hud.TextSize = 18
 hud.Text = "불러오는 중..."
 hud.Parent = gui
 
-local tapButton = Instance.new("TextButton")
-tapButton.Size = UDim2.fromOffset(180, 70)
-tapButton.AnchorPoint = Vector2.new(0.5, 1)
-tapButton.Position = UDim2.new(0.5, 0, 1, -24)
-tapButton.BackgroundColor3 = Color3.fromRGB(30, 140, 200)
-tapButton.TextColor3 = Color3.new(1, 1, 1)
-tapButton.TextScaled = true
-tapButton.Font = Enum.Font.GothamBold
-tapButton.Text = "TAP"
-tapButton.Parent = gui
-tapButton.MouseButton1Click:Connect(function()
-	actionEvent:FireServer("Tap")
-end)
-
 local panel = Instance.new("ScrollingFrame")
 panel.Size = UDim2.new(0, 280, 0.7, 0)
 panel.AnchorPoint = Vector2.new(1, 0.5)
@@ -72,8 +58,8 @@ layout.Padding = UDim.new(0, 6)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = panel
 
-local stoneOne = makeButton("산호석 +1", panel, 1)
-local stoneTwentyFive = makeButton("산호석 +25", panel, 2)
+local stoneOne = makeButton("걸음 강화 +1", panel, 1)
+local stoneTwentyFive = makeButton("걸음 강화 +25", panel, 2)
 local fishButton = makeButton("물고기 창조", panel, 3)
 stoneOne.MouseButton1Click:Connect(function()
 	actionEvent:FireServer("UpgradeStone", 1)
@@ -89,17 +75,17 @@ local coralButtons: { TextButton } = {}
 
 stateEvent.OnClientEvent:Connect(function(state)
 	hud.Text = string.format(
-		"생명력 %s\n탭당 %s  |  초당 %s\nSpeed %s  |  보석 %s  |  클리어 %d",
+		"생명력 %s\n걸음당 %s  |  초당 %s\nSpeed %s  |  보석 %s  |  클리어 %d",
 		NumberFormat.format(state.life),
-		NumberFormat.format(state.tapValue),
+		NumberFormat.format(state.stepValue),
 		NumberFormat.format(state.passive),
 		NumberFormat.format(state.speed),
 		NumberFormat.format(state.gems),
 		state.clears
 	)
 
-	stoneOne.Text = string.format("산호석 Lv%d +1  (%s)", state.stoneLevel, NumberFormat.format(state.stoneCost1))
-	stoneTwentyFive.Text = string.format("산호석 +25  (%s)", NumberFormat.format(state.stoneCost25))
+	stoneOne.Text = string.format("걸음 강화 Lv%d +1  (%s)", state.stoneLevel, NumberFormat.format(state.stoneCost1))
+	stoneTwentyFive.Text = string.format("걸음 강화 +25  (%s)", NumberFormat.format(state.stoneCost25))
 	fishButton.Text = string.format(
 		"물고기 창조 %d/%d  (%s)",
 		state.fishCount,

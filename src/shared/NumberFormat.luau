@@ -1,19 +1,11 @@
 --!strict
--- 어비스리움식 단위: 1A=1000, 1B=1000A, ..., 1Z, 1AA, 1AB ...
+-- 1,234 -> 1.23K, 5,000,000 -> 5M, 단위: K M B T Qa Qi Sx Sp Oc No Dc
+local SUFFIXES = { "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc" }
+
 local NumberFormat = {}
 
-local function suffix(index: number): string
-	local result = ""
-	while index > 0 do
-		index -= 1
-		result = string.char(65 + index % 26) .. result
-		index = index // 26
-	end
-	return result
-end
-
 function NumberFormat.format(n: number): string
-	if n ~= n then
+	if n ~= n or n < 0 then
 		return "0"
 	end
 	if n == math.huge then
@@ -22,13 +14,21 @@ function NumberFormat.format(n: number): string
 	if n < 1000 then
 		return tostring(math.floor(n))
 	end
+
 	local index = math.floor(math.log10(n) / 3)
+	if index > #SUFFIXES then
+		return string.format("%.2e", n)
+	end
+
 	local scaled = n / 1000 ^ index
-	if scaled >= 1000 then
+	if scaled >= 999.995 and index < #SUFFIXES then -- 반올림하면 1000.00이 되는 경계 (999,999 -> 1M)
 		index += 1
 		scaled /= 1000
 	end
-	return string.format("%.2f%s", scaled, suffix(index))
+
+	-- 소수 둘째 자리까지, 뒤쪽 0 제거 (1.50 -> 1.5, 10.00 -> 10)
+	local text = (string.gsub(string.format("%.2f", scaled), "%.?0+$", ""))
+	return text .. SUFFIXES[index]
 end
 
 return NumberFormat

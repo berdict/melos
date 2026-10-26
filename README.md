@@ -1,20 +1,21 @@
-# AquaEscape
+# 달리기 키우기 (가칭)
 
-걸음마다 Speed가 오르는 걷기 클리커(키보드 탈출 코스)에 어비스리움식 성장 시스템을 얹은 Roblox 게임. 설계는 [docs/DESIGN.md](docs/DESIGN.md) 참고.
+달리면서 속도 수치를 쌓고, 스테이지를 클리어해 코인을 벌고, 어항의 물고기로 배율을 올리는 Roblox 키우기 게임.
+기획은 [docs/기획서-1호.md](docs/기획서-1호.md)가 기준이다.
 
 ## 실행
 
-1. [Rojo](https://rojo.space) 설치
-2. 이 폴더에서 `rojo serve` 실행 후 Roblox Studio의 Rojo 플러그인으로 연결
-3. 맵에 `EscapeZone`, `KillBrick`, `EscapeGoal`, `EscapeSpawn` 태그를 단 파트를 배치 (DESIGN.md 5장)
-4. DataStore 저장을 테스트하려면 Studio의 Game Settings > Security > Enable Studio Access to API Services 켜기
+1. [Rojo](https://rojo.space) 설치 후 `rojo plugin install`
+2. 이 폴더에서 `rojo serve`
+3. Roblox Studio에서 Baseplate를 열고 Plugins > Rojo > Connect
+4. Play
 
 ## 구조
 
 ```
-src/shared   Config, Economy(순수 계산), NumberFormat
-src/server   PlayerData(저장), Main(탭/업그레이드), Escape(Speed/구역)
-src/client   UI
+src/shared   Config(수치), Economy(계산), NumberFormat(K/M/B/T 표기)
+src/server   PlayerData, Main(상태 전송), Steps(걸음/WalkSpeed)
+src/client   HUD
 ```
 
-수치 조정은 `src/shared/Config.luau`에서만 한다.
+임시 수치는 `src/shared/Config.luau`에서만 조정한다.

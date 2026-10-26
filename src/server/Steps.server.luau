@@ -1,7 +1,8 @@
 --!strict
 -- 걸음 감지: 서버가 직접 잰 이동으로만 걸음을 인정하고, 걸음마다 속도 수치를 올린다.
---   속도 수치 += 1 × 총 배율
+--   속도 수치 += 1 × 총 배율 (키 위를 걸을 때만)
 -- WalkSpeed는 속도 수치와 별개로 완만한 곡선(Economy.walkSpeed)으로 올린다.
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -18,6 +19,16 @@ type Tracker = {
 }
 
 local trackers: { [Player]: Tracker } = {}
+
+-- 걸음은 "Key" 태그가 붙은 길 위에서만 센다 (로비나 허공은 제외)
+local rayParams = RaycastParams.new()
+rayParams.FilterType = Enum.RaycastFilterType.Exclude
+
+local function isOnKey(character: Model, root: BasePart): boolean
+	rayParams.FilterDescendantsInstances = { character }
+	local result = workspace:Raycast(root.Position, Vector3.new(0, -Config.Steps.GroundRayLength, 0), rayParams)
+	return result ~= nil and CollectionService:HasTag(result.Instance, "Key")
+end
 
 local function track(player: Player)
 	trackers[player] = { lastPos = nil, elapsed = 0 }
@@ -48,6 +59,11 @@ while true do
 		if humanoid.WalkSpeed ~= walkSpeed then
 			humanoid.WalkSpeed = walkSpeed
 		end
+		-- 틈 설계가 점프 높이를 기준으로 하므로 값을 고정해 둔다
+		if humanoid.UseJumpPower or humanoid.JumpHeight ~= Config.Jump.Height then
+			humanoid.UseJumpPower = false
+			humanoid.JumpHeight = Config.Jump.Height
+		end
 
 		local position = root.Position
 		local lastPos = tracker.lastPos
@@ -64,7 +80,7 @@ while true do
 			and moved >= expected * Config.Steps.MinMoveRatio
 			and moved <= plausibleMax
 
-		if isWalking then
+		if isWalking and isOnKey(character :: Model, root) then
 			tracker.elapsed += dt
 			local steps = math.floor(tracker.elapsed / Config.Steps.Interval)
 			if steps > 0 then

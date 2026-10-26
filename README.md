@@ -14,8 +14,8 @@
 
 ```
 src/shared   Config(수치), Economy(계산), NumberFormat(K/M/B/T 표기)
-src/server   PlayerData, Main(상태 전송), Steps(걸음/WalkSpeed)
-src/client   HUD
+src/server   PlayerData, Main(상태 전송), Steps(걸음/WalkSpeed), Stages(키보드 길/입구/낙하)
+src/client   HUD, Keys(키 눌림 연출과 소리)
 ```
 
 임시 수치는 `src/shared/Config.luau`에서만 조정한다.
